@@ -1,4 +1,20 @@
 # epoch-archive
+# Quick Start
+
+```
+# build the binaries, assumes your libra source at ~/libra. See ENV vars below for setting custom path
+
+make bins
+
+# restore from an epoch in this archive
+
+EPOCH=77 make restore-all
+
+# Optional: backup from a remote node (must be within the prune window)
+
+EPOCH=80 URL=http://167.172.248.37 make backup-all
+
+```
 
 # Archive
 
