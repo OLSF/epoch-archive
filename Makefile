@@ -49,12 +49,12 @@ backup-epoch: create-folder
 
 	db-backup one-shot backup --backup-service-address ${URL}:6186 epoch-ending --start-epoch ${EPOCH} --end-epoch ${END_EPOCH} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
-commit-backup:
+commit:
 	#save to epoch archive repo for testing
 	git add -A && git commit -a -m "epoch archive ${EPOCH} - ${EPOCH_WAYPOINT}" && git push
 
 restore-epoch:
-	cargo run --release -p backup-cli --bin db-restore -- --target-db-dir ~/.0L/db epoch-ending --epoch-ending-manifest ~/epoch-archive/epoch_ending_68-.0a14/epoch_ending.manifest local-fs --dir ~/.0L/db 
+	db-restore --target-db-dir ${DB_PATH} epoch-ending --epoch-ending-manifest ${ARCHIVE_PATH}/${EPOCH}/epoch_ending_${EPOCH}*/epoch_ending.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 backup-transaction:
 	cargo run --release -p backup-cli --bin db-backup -- one-shot backup transaction --num_transactions 10000 --start-version 37538428 local-fs --dir ~/.0L/db
