@@ -11,7 +11,8 @@ DB_PATH=~/.0L/db
 endif
 
 ifndef URL
-URL=http://167.172.248.37
+# URL=http://167.172.248.37
+URL=http://localhost
 endif
 
 EPOCH_LEN = 1;
@@ -48,6 +49,9 @@ commit:
 	#save to epoch archive repo for testing
 	git add -A && git commit -a -m "epoch archive ${EPOCH} - ${EPOCH_WAYPOINT}" && git push
 
+restore-all: wipe restore-epoch restore-transaction restore-snapshot
+backup-all: backup-epoch backup-transaction backup-snapshot
+
 backup-epoch: create-folder
 	# IMPORTANT: The db-restore tool assumes you are running this from the location of your backups (likely the epoch-archive git project)
 	# The manifest file includes OS paths to chunks. Those paths are relative and fail if this is run outside of epoch-archive
@@ -60,9 +64,7 @@ backup-transaction: create-folder
 	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions 10000 --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 backup-snapshot: create-folder
-	cargo run --release -p backup-cli --bin db-backup -- one-shot backup --backup-service-address http://167.172.248.37:6186 state-snapshot --state-version 41315058 local-fs --dir ~/.0L/db
-
-		db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions 10000 --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions 10000 --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-epoch:
 	db-restore --target-db-dir ${DB_PATH} epoch-ending --epoch-ending-manifest ${ARCHIVE_PATH}/${EPOCH}/epoch_ending_${EPOCH}*/epoch_ending.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
@@ -76,4 +78,3 @@ restore-snapshot:
 
 	db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
-restore-all: wipe restore-epoch restore-transaction restore-snapshot
