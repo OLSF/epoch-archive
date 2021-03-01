@@ -23,7 +23,7 @@ EPOCH_LEN = 1
 endif
 
 ifndef TRANS_LEN
-TRANS_LEN = 100000
+TRANS_LEN = 1
 endif
 
 
@@ -78,17 +78,6 @@ backup-epoch: create-folder
 backup-transaction: create-folder
 	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions ${TRANS_LEN} --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
-#45,934,438
-
-#45,944,437
-
-# 45,934,438 // epoch 89 waypoint
-# 45,934,438 // yaml
-
-# 45,955,180
-# 45,955,338
-# 45,955,575
-# 45,955,943
 backup-snapshot: create-folder
 	db-backup one-shot backup --backup-service-address ${URL}:6186 state-snapshot --state-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
