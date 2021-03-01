@@ -15,11 +15,14 @@ DB_PATH=${DATA_PATH}/db
 endif
 
 ifndef URL
-# URL=http://167.172.248.37
 URL=http://localhost
 endif
 
+ifndef EPOCH_LEN
 EPOCH_LEN = 1;
+endif
+
+
 
 END_EPOCH = $(shell expr ${EPOCH} + ${EPOCH_LEN})
 
@@ -88,3 +91,11 @@ restore-snapshot:
 
 restore-waypoint:
 	@echo ${EPOCH_WAYPOINT} > ${DATA_PATH}/restore_waypoint
+
+
+prod-backup:
+	URL=http://167.172.248.37 make backup-all
+
+devnet-backup:
+	URL=http://157.230.15.42 make backup-all
+
