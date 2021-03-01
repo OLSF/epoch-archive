@@ -6,8 +6,12 @@ ifndef ARCHIVE_PATH
 ARCHIVE_PATH=~/epoch-archive
 endif
 
+ifndef DATA_PATH
+DATA_PATH=~/.0L
+endif
+
 ifndef DB_PATH
-DB_PATH=~/.0L/db
+DB_PATH=${DATA_PATH}/db
 endif
 
 ifndef URL
@@ -28,6 +32,8 @@ check:
 		echo "Must provide EPOCH in environment" 1>&2; \
 		exit 1; \
 	fi
+	@echo data-path: ${DATA_PATH}
+	@echo target-db: ${DB_PATH}
 	@echo backup-service-url: ${URL}
 	@echo start-epoch: ${EPOCH}
 	@echo end-epoch: ${END_EPOCH}
@@ -49,7 +55,9 @@ commit:
 	#save to epoch archive repo for testing
 	git add -A && git commit -a -m "epoch archive ${EPOCH} - ${EPOCH_WAYPOINT}" && git push
 
-restore-all: wipe restore-epoch restore-transaction restore-snapshot
+
+restore-all: wipe restore-epoch restore-transaction restore-snapshot restore-waypoint
+
 backup-all: backup-epoch backup-transaction backup-snapshot
 
 backup-epoch: create-folder
@@ -61,10 +69,10 @@ backup-epoch: create-folder
 	db-backup one-shot backup --backup-service-address ${URL}:6186 epoch-ending --start-epoch ${EPOCH} --end-epoch ${END_EPOCH} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 	
 backup-transaction: create-folder
-	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions 10000 --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions 100 --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 backup-snapshot: create-folder
-	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions 10000 --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	db-backup one-shot backup --backup-service-address ${URL}:6186 state-snapshot --state-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-epoch:
 	db-restore --target-db-dir ${DB_PATH} epoch-ending --epoch-ending-manifest ${ARCHIVE_PATH}/${EPOCH}/epoch_ending_${EPOCH}*/epoch_ending.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
@@ -78,3 +86,5 @@ restore-snapshot:
 
 	db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
+restore-waypoint:
+	@echo ${EPOCH_WAYPOINT} > ${DATA_PATH}/restore_waypoint
