@@ -13,6 +13,8 @@ EPOCH=77 make restore-all
 
 EPOCH=80 URL=http://167.172.248.37 make backup-all
 
+# Update the waypoint to latest waypoint in key_store.json
+
 ```
 
 # Archive
