@@ -7,13 +7,11 @@ make bins
 
 # Restore from an epoch in this archive. WILL DESTROY LOCAL DB!
 
-EPOCH=77 make restore-all
+EPOCH=89 make restore-all
 
 # Create backup from a remote node (which has backup-service enabled publicly, and epoch must be within the prune window)
 
-EPOCH=80 URL=http://167.172.248.37 make backup-all
-
-# Update the waypoint to latest waypoint in key_store.json
+EPOCH=89 URL=http://167.172.248.37 make backup-all
 
 ```
 
