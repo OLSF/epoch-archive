@@ -26,8 +26,6 @@ ifndef TRANS_LEN
 TRANS_LEN = 1
 endif
 
-
-
 END_EPOCH = $(shell expr ${EPOCH} + ${EPOCH_LEN})
 
 EPOCH_WAYPOINT = $(shell jq -r ".waypoints[0]" ${ARCHIVE_PATH}/${EPOCH}/ep*/epoch_ending.manifest)
@@ -72,8 +70,6 @@ backup-epoch: create-folder
 	# IMPORTANT: The db-restore tool assumes you are running this from the location of your backups (likely the epoch-archive git project)
 	# The manifest file includes OS paths to chunks. Those paths are relative and fail if this is run outside of epoch-archive
 
-#Test if the epoch folder exists
-
 	db-backup one-shot backup --backup-service-address ${URL}:6186 epoch-ending --start-epoch ${EPOCH} --end-epoch ${END_EPOCH} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 	
 backup-transaction: create-folder
@@ -90,8 +86,6 @@ restore-transaction:
 
 
 restore-snapshot:
-# cargo run --release -p backup-cli --bin db-restore -- --target-db-dir ~/.0L/db state-snapshot --state-manifest ~/epoch-archive/state_ver_41315058.6168/state.manifest --state-into-version 41315058 local-fs --dir ~/.0L/db
-
 	db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-waypoint:
