@@ -15,9 +15,9 @@ execution:
 
 full_node_networks:
     - discovery_method: "onchain"
-      # The network must have a listen address to specify protocols. This runs it locally to
-      # prevent remote, incoming connections.
-      listen_address: "/ip4/127.0.0.1/tcp/6179"
+      # this allows connections FROM ANYONE ON THE INTERNET
+      # necessary to allow public fullnodes to share state.
+      listen_address: "/ip4/0.0.0.0/tcp/6179"
       network_id: "public"
       seed_addrs:
         252F0B551C80CD9E951D82C6F70792AE:
