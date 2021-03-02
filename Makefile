@@ -62,7 +62,11 @@ commit:
 	git add -A && git commit -a -m "epoch archive ${EPOCH} - ${EPOCH_WAYPOINT}" && git push
 
 
-restore-all: wipe restore-epoch restore-transaction restore-snapshot restore-waypoint
+restore-all: wipe restore-epoch restore-transaction restore-snapshot restore-waypoint restore-yaml
+	# Destructive command. node.yaml, and db will be wiped.
+
+restore-latest:
+	export EPOCH=$(shell ls | sort -n | tail -1) && make restore-all restore-yaml
 
 backup-all: backup-epoch backup-transaction backup-snapshot
 
@@ -84,7 +88,6 @@ restore-epoch:
 restore-transaction:
 	db-restore --target-db-dir ${DB_PATH} transaction --transaction-manifest ${ARCHIVE_PATH}/${EPOCH}/transaction_${EPOCH_HEIGHT}*/transaction.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
-
 restore-snapshot:
 	db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
@@ -102,4 +105,3 @@ prod-backup:
 
 devnet-backup:
 	URL=http://157.230.15.42 make backup-all
-
