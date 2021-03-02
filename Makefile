@@ -105,3 +105,8 @@ prod-backup:
 
 devnet-backup:
 	URL=http://157.230.15.42 make backup-all
+
+chron:
+	#get epoch from key_store.json
+	#backup-all
+	#commit changes
