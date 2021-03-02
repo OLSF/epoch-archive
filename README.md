@@ -8,7 +8,7 @@ Assumes your libra source at ~/libra. See ENV vars below for setting custom path
 make bins
 ```
 
-### 2. Restore from the latest epoch in this archive. 
+### 2. Restore from the latest epoch in this archive
 
 #### WILL DESTROY LOCAL DB and NODE.YAML
 
