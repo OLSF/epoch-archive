@@ -53,6 +53,7 @@ create-folder: check
 	@if test ! -d ${ARCHIVE_PATH}/${EPOCH}; then \
 		mkdir ${ARCHIVE_PATH}/${EPOCH}; \
 	fi
+
 bins:
 	cd ${SOURCE_PATH} && cargo build -p backup-cli --release
 	sudo cp -f ${SOURCE_PATH}/target/release/db-restore /usr/local/bin/db-restore
@@ -97,6 +98,9 @@ restore-waypoint:
 	@echo ${EPOCH_WAYPOINT} > ${DATA_PATH}/restore_waypoint
 
 restore-yaml:
+	@if test ! -d ${DATA_PATH}; then \
+		mkdir ${DATA_PATH}; \
+	fi
 	cp ${ARCHIVE_PATH}/${EPOCH}/fullnode_template.node.yaml ${DATA_PATH}/node.yaml
 
 prod-backup:
