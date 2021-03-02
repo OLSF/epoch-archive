@@ -25,7 +25,7 @@ Assumes ~/.0L/node.yaml, change with ENVs
 EPOCH=89 make restore-yaml
 ```
 
-### Quick start: Backup
+# Quick start: Backup
 
 Create new backup from a remote node (which has backup-service enabled publicly, and epoch must be within the prune window)
 
@@ -34,7 +34,9 @@ EPOCH=89 URL=http://167.172.248.37 make backup-all
 
 ```
 
-# Archive
+-----
+
+# The Archive
 
 This repo keeps archives of 0L database at different block heights. The objective is to archive the state of heights at 1) the end of a calendar month 2) at the time of network updades.
 
@@ -51,12 +53,40 @@ Backups are a way of bootstrapping the DB. There are 3 types of point-in-time ba
 - Transactions
 - State Snapshot
 
+All three types of backups are needed to restore and bootstrap a database.
+
+
 # Backup-cli
 
-The goal of backups is to take the full state of a DB from a fullnode or validator, to accelerate the sync of a new prospective node.
-To do this a waypoint and version (blockheight) will be needed.
+The backup cli is composed of two binaries `db-backup` and `db-restore`. These must be compiled and saved to your user directory. `make bins` can do this.
 
-Three types of backups are needed to restore and bootstrap a database: epoch-ending, transaction, state-snapshot
+IMPORTANT: The db-restore tool assumes you are running this from the location of your backups (likely the epoch-archive git project)
+
+The manifest file includes OS paths to chunks. Those paths are relative and fail if this is run outside of epoch-archive
+
+Sample commands (from Makefile)
+
+```
+# backup-epoch:
+	db-backup one-shot backup --backup-service-address ${URL}:6186 epoch-ending --start-epoch ${EPOCH} --end-epoch ${END_EPOCH} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	
+# backup-transaction:
+	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions ${TRANS_LEN} --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+
+# backup-snapshot:
+	db-backup one-shot backup --backup-service-address ${URL}:6186 state-snapshot --state-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+
+# restore-epoch:
+	db-restore --target-db-dir ${DB_PATH} epoch-ending --epoch-ending-manifest ${ARCHIVE_PATH}/${EPOCH}/epoch_ending_${EPOCH}*/epoch_ending.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+
+# restore-transaction:
+	db-restore --target-db-dir ${DB_PATH} transaction --transaction-manifest ${ARCHIVE_PATH}/${EPOCH}/transaction_${EPOCH_HEIGHT}*/transaction.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+
+# restore-snapshot:
+	db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+
+```
+
 
 ## Makefile
 
