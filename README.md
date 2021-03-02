@@ -17,6 +17,36 @@ EPOCH=80 URL=http://167.172.248.37 make backup-all
 
 ```
 
+# Log messages
+
+The node is trying to catch up with the network
+```
+2021-03-01T20:08:03.720285Z [state-sync] INFO execution/executor/src/lib.rs:568 sync_request_received {"first_version_in_request":41316059,"local_synced_version":41316058,"name":"chunk_executor","num_txns_in_request":1000}
+2021-03-01T20:08:03.749924Z [state-sync] INFO language/libra-vm/src/libra_transaction_executor.rs:627 Executing block, transaction count: 1000 {"first_version":41316059,"name":"execution","txn_id":0}
+======================================  round is 998
+======================================  round is 999
+======================================  round is 1000
+======================================  round is 1001
+======================================  round is 1002
+======================================  round is 1003
+======================================  round is 1004
+======================================  round is 1005
+======================================  round is 1006
+======================================  round is 1007
+======================================  round is 1008
+```
+
+After state sync
+```
+======================================  round is 38407
+2021-03-01T23:58:06.181071Z [state-sync] INFO execution/executor/src/speculation_cache/mod.rs:202 Updated with a new root block {"name":"speculation_cache","root_block_id":"9c04c747c4ac6d9c6fa04dcd18115bf1f32dcfb0fef9bc482182d280f0fcbcf5"}
+2021-03-01T23:58:06.181157Z [state-sync] INFO execution/executor/src/lib.rs:614 sync_finished {"committed_with_ledger_info":true,"name":"chunk_executor","synced_to_version":45972972}
+2021-03-01T23:58:06.324104Z [state-sync] INFO execution/executor/src/speculation_cache/mod.rs:202 Updated with a new root block {"name":"speculation_cache","root_block_id":"9c04c747c4ac6d9c6fa04dcd18115bf1f32dcfb0fef9bc482182d280f0fcbcf5"}
+2021-03-01T23:58:06.324214Z [state-sync] INFO execution/executor/src/lib.rs:568 sync_request_received {"first_version_in_request":45972973,"local_synced_version":45972972,"name":"chunk_executor","num_txns_in_request":1}
+2021-03-01T23:58:06.329665Z [state-sync] INFO language/libra-vm/src/libra_transaction_executor.rs:627 Executing block, transaction count: 1 {"first_version":45972973,"name":"execution","txn_id":0}
+======================================  round is 38408
+```
+
 # Archive
 
 This repo keeps archives of 0L database at different block heights. The objective is to archive the state of heights at 1) the end of a calendar month 2) at the time of network updades.
