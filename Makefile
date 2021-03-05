@@ -45,7 +45,7 @@ check:
 	@echo epoch-height: ${EPOCH_HEIGHT}
 
 wipe: 
-	rm -rf ${DB_PATH}
+	sudo rm -rf ${DB_PATH}
 
 create-folder: check
 	@if test ! -d ${ARCHIVE_PATH}/${EPOCH}; then \
