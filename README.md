@@ -5,6 +5,8 @@
 Assumes your libra source at ~/libra. See ENV vars below for setting custom path
 
 ```
+git clone https://github.com/OLSF/epoch-archive.git
+cd epoch-archive
 make bins
 ```
 
@@ -13,6 +15,7 @@ make bins
 #### WILL DESTROY LOCAL DB and NODE.YAML
 
 ```
+cd epoch-archive
 make restore-latest
 ```
 
