@@ -2,7 +2,7 @@
 
 
 ### 1. Build the binaries
-Assumes your libra source at ~/libra. See ENV vars below for setting custom path
+The `make` recipes assume your 0L source is at `~/libra`. See ENV vars below for setting custom path
 
 ```
 git clone https://github.com/OLSF/epoch-archive.git
