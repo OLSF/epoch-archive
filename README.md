@@ -15,7 +15,8 @@ make bins
 #### WILL DESTROY LOCAL DB and NODE.YAML
 
 ```
-cd epoch-archive
+# while in /epoch-archive/
+
 make restore-latest
 ```
 
