@@ -61,6 +61,8 @@ commit:
 	#save to epoch archive repo for testing
 	git add -A && git commit -a -m "epoch archive ${EPOCH} - ${EPOCH_WAYPOINT}" && git push
 
+zip:
+	zip -r ${EPOCH}.zip ${EPOCH} 
 
 restore-all: wipe restore-epoch restore-transaction restore-snapshot restore-waypoint restore-yaml
 	# Destructive command. node.yaml, and db will be wiped.
