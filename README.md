@@ -24,7 +24,7 @@ make restore-latest
 Create new backup from a remote node (which has backup-service enabled publicly, and epoch must be within the prune window)
 
 ```
-EPOCH=89 URL=http://167.172.248.37 make backup-all
+EPOCH=104 URL=http://167.172.248.37 make backup-all
 
 ```
 
