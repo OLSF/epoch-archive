@@ -30,6 +30,9 @@ ifndef TRANS_LEN
 TRANS_LEN = 1
 endif
 
+LATEST_BACKUP = $(shell ls -a | sort -n | tail -1 | tr -dc '0-9')
+NEXT_BACKUP = $$((${LATEST_BACKUP} + 1)) 
+
 END_EPOCH = $(shell expr ${EPOCH} + ${EPOCH_LEN})
 
 EPOCH_WAYPOINT = $(shell jq -r ".waypoints[0]" ${ARCHIVE_PATH}/${EPOCH}/ep*/epoch_ending.manifest)
@@ -104,7 +107,9 @@ restore-yaml:
 	@if test ! -d ${DATA_PATH}; then \
 		mkdir ${DATA_PATH}; \
 	fi
-	cp ${ARCHIVE_PATH}/${EPOCH}/fullnode_template.node.yaml ${DATA_PATH}/node.yaml
+	cp ${ARCHIVE_PATH}/fullnode_template.node.yaml ${DATA_PATH}/node.yaml
+	sed 's/THE_WAYPOINT/${EPOCH_WAYPOINT}/g' ${DATA_PATH}/node.yaml
+
 
 prod-backup:
 	URL=http://167.172.248.37 make backup-all
@@ -112,7 +117,5 @@ prod-backup:
 devnet-backup:
 	URL=http://157.230.15.42 make backup-all
 
-chron:
-	#get epoch from key_store.json
-	#backup-all
-	#commit changes
+cron:
+	cd /root/epoch-archive/ && EPOCH=${NEXT_BACKUP} make backup-all zip commit
