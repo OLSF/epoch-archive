@@ -107,7 +107,7 @@ restore-yaml:
 	@if test ! -d ${DATA_PATH}; then \
 		mkdir ${DATA_PATH}; \
 	fi
-	cp ${ARCHIVE_PATH}/fullnode_template.node.yaml ${DATA_PATH}/node.yaml
+	cp ${ARCHIVE_PATH}/fullnode_template.yaml ${DATA_PATH}/node.yaml
 	sed 's/THE_WAYPOINT/${EPOCH_WAYPOINT}/g' ${DATA_PATH}/node.yaml
 
 
