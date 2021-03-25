@@ -18,6 +18,10 @@ ifndef URL
 URL=http://localhost
 endif
 
+ifndef EPOCH
+EPOCH= $(shell ls -1r | head -1)
+endif
+
 ifndef EPOCH_LEN
 EPOCH_LEN = 1
 endif
