@@ -30,7 +30,7 @@ ifndef TRANS_LEN
 TRANS_LEN = 1
 endif
 
-LATEST_BACKUP = $(shell ls -a | sort -n | tail -1 | tr -dc '0-9')
+LATEST_BACKUP = $(shell ls -a /root/epoch-archive/ | sort -n | tail -1 | tr -dc '0-9')
 NEXT_BACKUP = $$((${LATEST_BACKUP} + 1)) 
 
 END_EPOCH = $(shell expr ${EPOCH} + ${EPOCH_LEN})
@@ -118,4 +118,5 @@ devnet-backup:
 	URL=http://157.230.15.42 make backup-all
 
 cron:
-	cd /root/epoch-archive/ && EPOCH=${NEXT_BACKUP} make backup-all zip commit
+	cd /root/epoch-archive/ && EPOCH=${NEXT_BACKUP} make backup-all zip  2>&1 
+
