@@ -3,7 +3,7 @@ base:
     data_dir: "/root/.0L/"
     role: "full_node"
     waypoint: 
-        from_config: "45934438:732ea2e1c3c5ee892da11abcd1211f22c06b5cf75fd6d47a9492c21dbfc32a46"
+        from_config: THE_WAYPOINT
         # Update this value to that which Diem publicly provides. Please regard the directions
         # below on how to safely manage your genesis_file_location with respect to the waypoint.
 
