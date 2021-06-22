@@ -69,6 +69,7 @@ commit:
 
 zip:
 	zip -r ${EPOCH}.zip ${EPOCH}
+	tar -czvf ${EPOCH}.tar.gz ${EPOCH}
 
 restore-all: wipe restore-epoch restore-transaction restore-snapshot restore-waypoint restore-yaml
 	# Destructive command. node.yaml, and db will be wiped.
