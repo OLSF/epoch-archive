@@ -1,3 +1,11 @@
+SHELL=/usr/bin/env bash
+
+EPOCH_NOW = $(shell ol query --epoch | cut -f2- -d"H" | (cut -f1 -d"-") | sed 's/[^0-9]*//g' | bc)
+
+ifndef BIN_PATH
+BIN_PATH=~/bin
+endif
+
 ifndef SOURCE_PATH
 SOURCE_PATH=~/libra
 endif
@@ -19,7 +27,7 @@ URL=http://localhost
 endif
 
 ifndef EPOCH
-EPOCH= $(shell ls -1r | head -1)
+EPOCH=$(shell expr ${EPOCH_NOW} - 1)
 endif
 
 ifndef EPOCH_LEN
@@ -29,6 +37,7 @@ endif
 ifndef TRANS_LEN
 TRANS_LEN = 1
 endif
+
 
 LATEST_BACKUP = $(shell ls -a /root/epoch-archive/ | sort -n | tail -1 | tr -dc '0-9')
 NEXT_BACKUP = $$((${LATEST_BACKUP} + 1)) 
@@ -61,8 +70,8 @@ create-folder: check
 
 bins:
 	cd ${SOURCE_PATH} && cargo build -p backup-cli --release
-	sudo cp -f ${SOURCE_PATH}/target/release/db-restore /usr/local/bin/db-restore
-	sudo cp -f ${SOURCE_PATH}/target/release/db-backup /usr/local/bin/db-backup
+	cp -f ${SOURCE_PATH}/target/release/db-restore /usr/local/bin/db-restore
+	cp -f ${SOURCE_PATH}/target/release/db-backup /usr/local/bin/db-backup
 commit:
 	#save to epoch archive repo for testing
 	git add -A && git commit -a -m "epoch archive ${EPOCH} - ${EPOCH_WAYPOINT}" && git push
@@ -70,6 +79,9 @@ commit:
 zip:
 	zip -r ${EPOCH}.zip ${EPOCH}
 	tar -czvf ${EPOCH}.tar.gz ${EPOCH}
+
+epoch:
+	@echo ${EPOCH_NOW}
 
 restore-all: wipe restore-epoch restore-transaction restore-snapshot restore-waypoint restore-yaml
 	# Destructive command. node.yaml, and db will be wiped.
@@ -83,22 +95,22 @@ backup-epoch: create-folder
 	# IMPORTANT: The db-restore tool assumes you are running this from the location of your backups (likely the epoch-archive git project)
 	# The manifest file includes OS paths to chunks. Those paths are relative and fail if this is run outside of epoch-archive
 
-	db-backup one-shot backup --backup-service-address ${URL}:6186 epoch-ending --start-epoch ${EPOCH} --end-epoch ${END_EPOCH} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	${BIN_PATH}/db-backup one-shot backup --backup-service-address ${URL}:6186 epoch-ending --start-epoch ${EPOCH} --end-epoch ${END_EPOCH} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 backup-transaction: create-folder
-	db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions ${TRANS_LEN} --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	${BIN_PATH}/db-backup one-shot backup --backup-service-address ${URL}:6186 transaction --num_transactions ${TRANS_LEN} --start-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 backup-snapshot: create-folder
-	db-backup one-shot backup --backup-service-address ${URL}:6186 state-snapshot --state-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	${BIN_PATH}/db-backup one-shot backup --backup-service-address ${URL}:6186 state-snapshot --state-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-epoch:
-	db-restore --target-db-dir ${DB_PATH} epoch-ending --epoch-ending-manifest ${ARCHIVE_PATH}/${EPOCH}/epoch_ending_${EPOCH}*/epoch_ending.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	${BIN_PATH}/db-restore --target-db-dir ${DB_PATH} epoch-ending --epoch-ending-manifest ${ARCHIVE_PATH}/${EPOCH}/epoch_ending_${EPOCH}*/epoch_ending.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-transaction:
-	db-restore --target-db-dir ${DB_PATH} transaction --transaction-manifest ${ARCHIVE_PATH}/${EPOCH}/transaction_${EPOCH_HEIGHT}*/transaction.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	${BIN_PATH}/db-restore --target-db-dir ${DB_PATH} transaction --transaction-manifest ${ARCHIVE_PATH}/${EPOCH}/transaction_${EPOCH_HEIGHT}*/transaction.manifest local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-snapshot:
-	db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
+	${BIN_PATH}/db-restore --target-db-dir ${DB_PATH} state-snapshot --state-manifest ${ARCHIVE_PATH}/${EPOCH}/state_ver_${EPOCH_HEIGHT}*/state.manifest --state-into-version ${EPOCH_HEIGHT} local-fs --dir ${ARCHIVE_PATH}/${EPOCH}
 
 restore-waypoint:
 	@echo ${EPOCH_WAYPOINT} > ${DATA_PATH}/restore_waypoint
